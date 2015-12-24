@@ -1,4 +1,5 @@
 import gab.opencv.*;
+import java.awt.Rectangle;
 
 OpenCV opencv;
 
@@ -8,6 +9,7 @@ int IMG_WIDTH  = 500;
 PImage img;
 
 ArrayList<Contour> mizugiAreaList;
+Rectangle[] faces;
 
 void setup() {
   size(IMG_WIDTH, IMG_HEIGHT);
@@ -18,6 +20,7 @@ void setup() {
   mizugiAreaList = new ArrayList<Contour>();
 
   detectMizugi();
+  detectFaces();
   drawImage();
 }
 
@@ -33,6 +36,15 @@ void drawImage() {
     stroke(255, 0, 0);
     noFill();
     contour.draw();
+  }
+
+  // 抽出した顔を青色で塗る
+  for (int i = 0; i < faces.length; i++) {
+    strokeWeight(10);
+    stroke(0, 255, 255);
+    noFill();
+    Rectangle face = faces[i];
+    rect(face.x, face.y, face.width, face.height);
   }
 }
 
@@ -62,4 +74,10 @@ void detectMizugi() {
       mizugiAreaList.add(contour);
     }
   }
+}
+
+void detectFaces() {
+  opencv.loadImage(img);
+  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
+  faces = opencv.detect();
 }
